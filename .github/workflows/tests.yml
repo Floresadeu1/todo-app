@@ -64,6 +64,7 @@ jobs:
       - name: Parcours utilisateur avec 1 à 5 navigateurs, puis benchmark de volume
         env:
           K6_BROWSER_HEADLESS: "true"
+          K6_BROWSER_ARGS: "no-sandbox"
         run: |
           mkdir -p rapports
           npx start-server-and-test start http://localhost:3000 \
