@@ -8,10 +8,13 @@
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "eslint",
-    "test:unitaires": "node --test tests/",
+    "test:unitaires": "node --test tests/regles.test.mjs",
     "test:bdd": "cucumber-js",
     "test:e2e": "npm run build && start-server-and-test start http://localhost:3000 test:bdd",
-    "test": "npm run test:unitaires && npm run test:e2e"
+    "test": "npm run test:unitaires && npm run test:e2e",
+    "perf:dossier": "node -e \"import('node:fs').then((fs) => fs.mkdirSync('rapports', { recursive: true }))\"",
+    "perf:parcours": "npm run perf:dossier && k6 run k6/parcours.js",
+    "perf:benchmark": "npm run perf:dossier && k6 run k6/benchmark.js"
   },
   "dependencies": {
     "next": "15.5.29",

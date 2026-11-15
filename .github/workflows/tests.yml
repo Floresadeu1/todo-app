@@ -1,0 +1,77 @@
+# .github/workflows/tests.yml
+# Intégration continue : à CHAQUE push (et chaque pull request), GitHub lance tous les tests.
+#   1. job "tests"       : tests unitaires + 41 scénarios BDD (Cucumber + Playwright)
+#   2. job "performance" : tests k6 Browser (1 à 5 navigateurs + benchmark 1 000 → 10 000 tâches)
+#      Il ne démarre que si le job "tests" est vert : inutile de mesurer une application cassée.
+# Les rapports (HTML Cucumber, résultats k6) sont téléchargeables dans l'onglet « Actions ».
+
+name: Tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  tests:
+    name: Tests unitaires et BDD
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Installer Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Installer les dépendances (exactement celles de package-lock.json)
+        run: npm ci
+
+      - name: Installer le navigateur Chromium de Playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: Lancer les tests (unitaires, build, puis BDD sur l'application démarrée)
+        run: npm test
+
+      - name: Publier le rapport Cucumber
+        if: always() # même si des tests échouent : c'est là qu'on en a le plus besoin
+        uses: actions/upload-artifact@v4
+        with:
+          name: rapport-cucumber
+          path: rapports/
+
+  performance:
+    name: Performance (k6 Browser)
+    needs: tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Construire l'application (version de production)
+        run: npm run build
+
+      - name: Installer k6
+        uses: grafana/setup-k6-action@v1
+
+      - name: Parcours utilisateur avec 1 à 5 navigateurs, puis benchmark de volume
+        env:
+          K6_BROWSER_HEADLESS: "true"
+        run: |
+          mkdir -p rapports
+          npx start-server-and-test start http://localhost:3000 \
+            "for n in 1 2 3 4 5; do k6 run -e VUS=\$n k6/parcours.js || exit 1; done && k6 run k6/benchmark.js"
+
+      - name: Publier les résultats k6
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: resultats-k6
+          path: rapports/
