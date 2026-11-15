@@ -1,69 +1,281 @@
 /* app/globals.css */
 :root {
-  --fond: #f5f6f8;
+  --fond: #f4f5fa;
   --carte: #ffffff;
-  --texte: #1d2433;
-  --doux: #5b6476;
-  --accent: #2f5bea;
-  --erreur: #c62828;
-  --bord: #e1e4ea;
+  --texte: #1c2333;
+  --doux: #6b7385;
+  --tres-doux: #9aa1b1;
+  --accent: #4f6bed;
+  --accent-clair: #eef1fe;
+  --erreur: #d03b3b;
+  --erreur-clair: #fdeeee;
+  --bord: #e6e8ef;
+  --ombre: 0 1px 2px rgba(16, 24, 40, 0.04), 0 4px 16px rgba(16, 24, 40, 0.06);
 }
 
 * { box-sizing: border-box; }
 
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
   background: var(--fond);
   color: var(--texte);
+  -webkit-font-smoothing: antialiased;
 }
 
-main { max-width: 760px; margin: 32px auto; padding: 0 16px; }
-h1 { margin: 0 0 20px; }
-h2 { margin-top: 0; font-size: 1.2rem; }
+/* ---------- Mise en page ---------- */
 
-section {
+.appli { max-width: 1040px; margin: 0 auto; padding: 40px 20px; }
+
+.entete h1 { margin: 0; font-size: 2rem; letter-spacing: -0.02em; }
+.sous-titre { margin: 4px 0 28px; color: var(--doux); }
+
+.grille {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+.grille > * { min-width: 0; } /* empêche un champ trop large d'élargir la colonne */
+@media (max-width: 760px) {
+  .grille { grid-template-columns: 1fr; }
+  .appli { padding: 24px 16px; }
+}
+
+.carte {
   background: var(--carte);
-  border-radius: 10px;
-  padding: 16px 20px;
-  margin-bottom: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--bord);
+  border-radius: 14px;
+  box-shadow: var(--ombre);
+  padding: 20px;
 }
 
-form { display: flex; gap: 8px; flex-wrap: wrap; }
+/* ---------- Champs et boutons ---------- */
 
-input, select, button {
+input:not([type="checkbox"]), select {
   font: inherit;
-  padding: 8px 10px;
-  border: 1px solid #c8ccd4;
-  border-radius: 6px;
+  padding: 10px 12px;
+  border: 1px solid var(--bord);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--texte);
+  min-width: 0;
 }
-input:not([type="checkbox"]) { flex: 1; min-width: 180px; }
+input:not([type="checkbox"]):focus, select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-clair);
+}
 
-button { background: var(--accent); color: #fff; border: none; cursor: pointer; }
-button.secondaire { background: #8a93a6; }
+button { font: inherit; cursor: pointer; }
 
-ul { list-style: none; padding: 0; margin: 12px 0 0; }
-li {
+button.principal {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-weight: 600;
+}
+button.principal:hover { filter: brightness(1.08); }
+
+button.icone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--tres-doux);
+}
+button.icone:hover { background: var(--accent-clair); color: var(--accent); }
+button.icone.danger:hover { background: var(--erreur-clair); color: var(--erreur); }
+
+button.secondaire {
+  background: #fff;
+  color: var(--texte);
+  border: 1px solid var(--bord);
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-weight: 600;
+}
+button.secondaire:hover { background: var(--fond); }
+button.petit { padding: 7px 12px; font-size: 0.88rem; }
+
+/* ---------- Colonne des projets ---------- */
+
+.surtitre {
+  margin: 0 0 12px;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--tres-doux);
+}
+
+.menu { list-style: none; padding: 0; margin: 0 0 16px; }
+.menu li { display: flex; align-items: center; gap: 2px; }
+
+.entree {
+  flex: 1;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 0;
-  border-bottom: 1px solid var(--bord);
-  flex-wrap: wrap;
+  gap: 10px;
+  padding: 9px 10px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--texte);
+  text-align: left;
+  min-width: 0;
 }
-.nom { flex: 1; }
+.entree:hover { background: var(--fond); }
+.entree.active { background: var(--accent-clair); color: var(--accent); font-weight: 600; }
+.entree .nom { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-.erreur { color: var(--erreur); font-weight: 600; margin: 10px 0 0; }
-.vide { color: var(--doux); }
+
+.pastille {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.pastille-tous { background: linear-gradient(135deg, #4f6bed, #16a34a, #ea580c); }
+
+.badge {
+  min-width: 24px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--fond);
+  color: var(--doux);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: center;
+}
+.entree.active .badge { background: #fff; color: var(--accent); }
+
+.ajout-projet { display: flex; gap: 8px; border-top: 1px solid var(--bord); padding-top: 16px; }
+.ajout-projet input { flex: 1; }
+
+/* ---------- Partie des tâches ---------- */
+
+.entete-section {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.entete-section h2 { margin: 0; font-size: 1.35rem; }
+.compteur { margin: 0; color: var(--doux); font-size: 0.92rem; }
+
+.ajout-tache { display: flex; gap: 8px; flex-wrap: wrap; }
+.ajout-tache input { flex: 1 1 200px; }
+.ajout-tache select { flex: 1 1 140px; }
+
+.liste-taches { list-style: none; padding: 0; margin: 16px 0 0; }
+
+.tache {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 10px;
+  border-radius: 10px;
+}
+.tache + .tache { border-top: 1px solid var(--bord); }
+.tache:hover { background: #fafbfd; }
+
+.tache input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.tache .titre { flex: 1; overflow-wrap: anywhere; }
+.tache.terminee .titre { text-decoration: line-through; color: var(--tres-doux); }
+
 
 .etiquette {
-  background: #e8edfd;
-  color: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
   border-radius: 999px;
-  padding: 2px 10px;
-  font-size: 0.85rem;
+  background: var(--fond);
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
 }
-.terminee .nom { text-decoration: line-through; color: var(--doux); }
-.filtre { display: block; margin-top: 16px; }
-.compteur { color: var(--doux); margin-bottom: 0; }
+.etiquette .pastille { width: 8px; height: 8px; }
+
+/* ---------- Mode édition (projet ou tâche) ---------- */
+
+.ligne-projet.edition { flex-direction: column; align-items: stretch; gap: 8px; padding: 8px 0; }
+.actions-edition { display: flex; gap: 6px; }
+
+.tache.edition { flex-wrap: wrap; background: var(--accent-clair); }
+.tache.edition input { flex: 1; min-width: 180px; }
+
+/* ---------- Messages ---------- */
+
+.erreur {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--erreur-clair);
+  color: var(--erreur);
+  font-weight: 600;
+  font-size: 0.92rem;
+}
+
+.vide { color: var(--doux); margin: 4px 0 0; }
+.vide.petit { font-size: 0.9rem; margin-bottom: 16px; }
+
+.etat-vide { text-align: center; padding: 40px 12px 24px; }
+.etat-vide-titre { margin: 0; font-weight: 600; }
+
+/* ---------- Bandeau « supprimé · Annuler » ---------- */
+
+.notification {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  max-width: calc(100% - 32px);
+  padding: 12px 12px 12px 18px;
+  border-radius: 10px;
+  background: #1c2333;
+  color: #fff;
+  box-shadow: 0 8px 24px rgba(16, 24, 40, 0.25);
+  animation: apparition 0.2s ease-out;
+}
+.notification span { overflow-wrap: anywhere; }
+.notification button.lien {
+  border: none;
+  background: transparent;
+  color: #a9b8ff;
+  font-weight: 700;
+  padding: 4px 6px;
+}
+.notification button.lien:hover { text-decoration: underline; }
+.notification button.fermer {
+  border: none;
+  background: transparent;
+  color: #9aa1b1;
+  font-size: 1.2rem;
+  line-height: 1;
+  padding: 4px 6px;
+}
+@keyframes apparition {
+  from { opacity: 0; transform: translate(-50%, 8px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
